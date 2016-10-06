@@ -15,6 +15,18 @@ window.onload = function() {
 
 
 const movePlayer=(player)=>{
-	ctx.drawImage(player.image,player.x+=10,player.y+=10)
+	ctx.clearRect(0,0,500,500)
+	if(event.key==='ArrowLeft'){
+		ctx.drawImage(player.image,player.x-=10,player.y)
+		}
+		if(event.key==='ArrowUp'){
+		ctx.drawImage(player.image,player.x,player.y-=10)
+		}
+		if(event.key==='ArrowDown'){
+		ctx.drawImage(player.image,player.x,player.y+=10)
+		}
+		if(event.key==='ArrowRight'){
+		ctx.drawImage(player.image,player.x+=10,player.y)
+		}
 }
 
