@@ -6,30 +6,24 @@ var c=document.getElementById("game");
 var ctx=c.getContext("2d");
 var status=document.querySelector('.status')
 let player1 ={}
+let obstacles=[]
 //obstacles will be randomly generated
-let obstacles=[ {width:50,height:50,x:50,y:50, ySpd:1, xSpd:1},
-                {width:50,height:50,x:100,y:150, ySpd:-1, xSpd:2},
-                {width:50,height:50,x:100,y:200, ySpd:-1, xSpd:2},
-                {width:50,height:50,x:20,y:150, ySpd:-1, xSpd:2},
-                {width:50,height:50,x:17,y:19, ySpd:-1, xSpd:2},
-                {width:50,height:50,x:140,y:430, ySpd:-1, xSpd:2}]
+socket.on('game start', game=>{
+  player1= game.player1
+	player1.image=document.getElementById("player1");
+  player1.keyState={}
+  obstacles=game.obstacles
 
-window.onload = function() {
+  window.addEventListener('keydown',e=>{
+  	player1.keyState[e.keyCode || e.which]=true;
+  })
 
-		player1.image=document.getElementById("player1");
-		player1.x=250;
-		player1.y=250;
-    player1.keyState={}
-
-    window.addEventListener('keydown',e=>{
-    	player1.keyState[e.keyCode || e.which]=true;
-    })
-
-     window.addEventListener('keyup',e=>{
-      player1.keyState[e.keyCode || e.which]=false;
-    })
+   window.addEventListener('keyup',e=>{
+    player1.keyState[e.keyCode || e.which]=false;
+  })
 gameLoop()
-};
+})
+
 var score = 0
 const gameLoop=()=>{
   let loopTimer=setTimeout(gameLoop,10)
