@@ -58,16 +58,16 @@ const checkBounds=(player)=>{
 
 const checkObstacleBounds=(obstacle)=>{
   if(obstacle.x + obstacle.width >= c.width){
-    obstacle.xSpd= -Math.random()*3
+    obstacle.xSpd= -Math.random()*2-1
   }
   else if(obstacle.x <= 0){
-    obstacle.xSpd= Math.random()*3
+    obstacle.xSpd= Math.random()*2+1
   }
   else if(obstacle.y + obstacle.height >= c.height){
-    obstacle.ySpd= -Math.random()*3
+    obstacle.ySpd= -Math.random()*2-1
   }
   else if(obstacle.y <= 0){
-    obstacle.ySpd= Math.random()*3
+    obstacle.ySpd= Math.random()*2+1
   }
 }
 
