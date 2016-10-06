@@ -1,9 +1,10 @@
 'use strict'
- var c=document.getElementById("game");
+var c=document.getElementById("game");
 var ctx=c.getContext("2d");
+var status=document.querySelector('.status')
 let keyState={}
 let player1 ={}
-let obstacles=[{width:50,height:50,x:100,y:100}]
+let obstacles=[{width:50,height:50,x:50,y:50}]
 window.onload = function() {
 		
 		player1.image=document.getElementById("player1");
@@ -22,9 +23,10 @@ gameLoop()
 };
 
 let gameLoop=()=>{
-
+  let loopTimer=setTimeout(gameLoop,10)
   ctx.clearRect(0,0,c.width,c.height)
-  obstacleControl(player1)
+
+  obstacleControl(player1,loopTimer)
   
   if(keyState[37] && keyState[40]){
     player1.x-=2
@@ -57,7 +59,7 @@ let gameLoop=()=>{
 
     checkBounds(player1)
     ctx.drawImage(player1.image,player1.x,player1.y)
-    setTimeout(gameLoop,10)
+    
   }
 
 const checkBounds=(player)=>{
@@ -74,17 +76,18 @@ const checkBounds=(player)=>{
     player.y=0
   }
 }
-
-const obstacleControl=(player)=>{
+ 
+const obstacleControl=(player,loopTimer)=>{
   obstacles.forEach(obstacle=>{
-    if(player.x  > obstacle.x && player.x < obstacle.x + obstacle.width
-      || player.y  > obstacle.y && player.y < obstacle.y + obstacle.height){
-      console.log('hit!')
-    }
-      ctx.fillRect(obstacle.x,obstacle.y,obstacle.width,obstacle.height)
+    ctx.fillRect(obstacle.x,obstacle.y,obstacle.width,obstacle.height)
       obstacle.x++;
       obstacle.y++;
 
+    if(player.x  < obstacle.x + obstacle.width && player.x + player.image.width > obstacle.x
+      && player.y  < obstacle.y + obstacle.height && player.y + player.image.height >obstacle.y){
+      clearTimeout(loopTimer)
+    }
+      
   })
 }
 
