@@ -2,21 +2,22 @@
 var c=document.getElementById("game");
 var ctx=c.getContext("2d");
 var status=document.querySelector('.status')
-let keyState={}
 let player1 ={}
-let obstacles=[{width:50,height:50,x:50,y:50}]
+let obstacles=[{width:50,height:50,x:50,y:50, ySpd:1, xSpd:1}]
 window.onload = function() {
 		
 		player1.image=document.getElementById("player1");
+    console.log(player1.image)
 		player1.x=250;
 		player1.y=250;
+    player1.keyState={}
   
     window.addEventListener('keydown',e=>{
-    	keyState[e.keyCode || e.which]=true;
+    	player1.keyState[e.keyCode || e.which]=true;
     })
 
      window.addEventListener('keyup',e=>{
-    	keyState[e.keyCode || e.which]=false;
+    	player1.keyState[e.keyCode || e.which]=false;
     })
 
 gameLoop()
@@ -27,38 +28,9 @@ let gameLoop=()=>{
   ctx.clearRect(0,0,c.width,c.height)
 
   obstacleControl(player1,loopTimer)
-  
-  if(keyState[37] && keyState[40]){
-    player1.x-=2
-    player1.y+=2
-  }
-  else if(keyState[39] && keyState[40]){
-    player1.x+=2
-    player1.y+=2
-  }
-  else if(keyState[37] && keyState[38]){
-    player1.x-=2
-    player1.y-=2
-  }
-  else if(keyState[39] && keyState[38]){
-    player1.x+=2
-    player1.y-=2
-  }
-  else if (keyState[37]){
-       player1.x -=3;
-      }
-  else if (keyState[39]){
-       player1.x +=3;
-      }
-  else if (keyState[38]){
-       player1.y -=3;
-      }
-  else if (keyState[40]){
-       player1.y +=3;
-      }
-
-    checkBounds(player1)
-    ctx.drawImage(player1.image,player1.x,player1.y)
+  checkInput(player1)
+  checkBounds(player1)
+  ctx.drawImage(player1.image,player1.x,player1.y)
     
   }
 
@@ -80,8 +52,8 @@ const checkBounds=(player)=>{
 const obstacleControl=(player,loopTimer)=>{
   obstacles.forEach(obstacle=>{
     ctx.fillRect(obstacle.x,obstacle.y,obstacle.width,obstacle.height)
-      obstacle.x++;
-      obstacle.y++;
+      obstacle.x += obstacle.xSpd;
+      obstacle.y += obstacle.ySpd;
 
     if(player.x  < obstacle.x + obstacle.width && player.x + player.image.width > obstacle.x
       && player.y  < obstacle.y + obstacle.height && player.y + player.image.height >obstacle.y){
@@ -89,6 +61,38 @@ const obstacleControl=(player,loopTimer)=>{
     }
       
   })
+}
+
+const checkInput=(player)=>{
+  if(player.keyState[37] && player.keyState[40]){
+    player.x-=2
+    player.y+=2
+  }
+  else if(player.keyState[39] && player.keyState[40]){
+    player.x+=2
+    player.y+=2
+  }
+  else if(player.keyState[37] && player.keyState[38]){
+    player.x-=2
+    player.y-=2
+  }
+  else if(player.keyState[39] && player.keyState[38]){
+    player.x+=2
+    player.y-=2
+  }
+  else if (player.keyState[37]){
+       player.x -=3;
+      }
+  else if (player.keyState[39]){
+       player.x +=3;
+      }
+  else if (player.keyState[38]){
+       player.y -=3;
+      }
+  else if (player.keyState[40]){
+       player.y +=3;
+      }
+
 }
 
 
