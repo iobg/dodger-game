@@ -40,10 +40,59 @@ io.on('connect',socket=>{
   game.player1={
   	x:250,
   	y:250,
-  	name: "test"
+  	name: "test",
+  	keyState: {}
   }
   game.player2=undefined
-  
   socket.emit('game start', game)
+  gameLoop(game)
+socket.on('keyPress', key=>{
+	game.player1.keyState[key]=true;
+})
+socket.on('keyRelease', key=>{
+	game.player1.keyState[key]=false;
+})
 
 })
+
+const gameLoop=(game)=>{
+	let loopTimer=setTimeout(()=>{gameLoop(game)},10)
+	checkInput(game.player1)
+	io.emit('update',game)
+	}
+
+const checkInput=(player)=>{
+  if(player.keyState[37] && player.keyState[40]){
+    player.x-=2
+    player.y+=2
+  }
+  else if(player.keyState[39] && player.keyState[40]){
+    player.x+=2
+    player.y+=2
+  }
+  else if(player.keyState[37] && player.keyState[38]){
+    player.x-=2
+    player.y-=2
+  }
+  else if(player.keyState[39] && player.keyState[38]){
+    player.x+=2
+    player.y-=2
+  }
+  else if (player.keyState[37]){
+       player.x -=3;
+      }
+  else if (player.keyState[39]){
+       player.x +=3;
+      }
+  else if (player.keyState[38]){
+       player.y -=3;
+      }
+  else if (player.keyState[40]){
+       player.y +=3;
+      }
+
+}
+
+
+
+

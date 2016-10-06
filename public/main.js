@@ -5,37 +5,30 @@ const socket = io()
 var c=document.getElementById("game");
 var ctx=c.getContext("2d");
 var status=document.querySelector('.status')
-let player1 ={}
-let obstacles=[]
 //obstacles will be randomly generated
-socket.on('game start', game=>{
-  player1= game.player1
-	player1.image=document.getElementById("player1");
-  player1.keyState={}
-  obstacles=game.obstacles
+var score = 0
 
-  window.addEventListener('keydown',e=>{
-  	player1.keyState[e.keyCode || e.which]=true;
-  })
-
-   window.addEventListener('keyup',e=>{
-    player1.keyState[e.keyCode || e.which]=false;
-  })
-gameLoop()
+window.addEventListener('keydown',e=>{
+  socket.emit('keyPress', e.keyCode)
 })
 
-var score = 0
-const gameLoop=()=>{
-  let loopTimer=setTimeout(gameLoop,10)
+window.addEventListener('keyup',e=>{
+  socket.emit('keyRelease',e.keyCode)
+})
+
+socket.on('update', game=>{
+
+
+  game.player1.image=document.querySelector('#player1')
+  let loopTimer =undefined;
   clearScreen()
-  checkInput(player1)
-  checkBounds(player1)
-  drawPlayer(player1)
-  obstacleControl(player1,loopTimer)
+  checkBounds(game.player1)
+  drawPlayer(game.player1)
+  obstacleControl(game.obstacles,game.player1,loopTimer)
   ctx.font="30px Arial";
   ctx.fillText(score, 10, 490)
   score++
-  }
+  })
 const clearScreen=()=>{
   ctx.clearRect(0,0,c.width,c.height)
 }
@@ -70,7 +63,7 @@ const checkObstacleBounds=(obstacle)=>{
 }
 
 
-const obstacleControl=(player,loopTimer)=>{
+const obstacleControl=(obstacles,player,loopTimer)=>{
   obstacles.forEach(obstacle=>{
     ctx.fillRect(obstacle.x,obstacle.y,obstacle.width,obstacle.height)
     checkObstacleBounds(obstacle)
@@ -87,37 +80,7 @@ const obstacleControl=(player,loopTimer)=>{
 const drawPlayer=(player)=>{
   ctx.drawImage(player.image,player.x,player.y)
 }
-const checkInput=(player)=>{
-  if(player.keyState[37] && player.keyState[40]){
-    player.x-=2
-    player.y+=2
-  }
-  else if(player.keyState[39] && player.keyState[40]){
-    player.x+=2
-    player.y+=2
-  }
-  else if(player.keyState[37] && player.keyState[38]){
-    player.x-=2
-    player.y-=2
-  }
-  else if(player.keyState[39] && player.keyState[38]){
-    player.x+=2
-    player.y-=2
-  }
-  else if (player.keyState[37]){
-       player.x -=3;
-      }
-  else if (player.keyState[39]){
-       player.x +=3;
-      }
-  else if (player.keyState[38]){
-       player.y -=3;
-      }
-  else if (player.keyState[40]){
-       player.y +=3;
-      }
 
-}
 
 socket.on('connect', () => console.log(`Socket conected ${socket.id}`))
 socket.on('disconnect', () => console.log(`Socket disconnected ${socket.id}`))
