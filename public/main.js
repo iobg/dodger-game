@@ -24,7 +24,7 @@ gameLoop()
 let gameLoop=()=>{
 
   ctx.clearRect(0,0,c.width,c.height)
-  obstacleControl()
+  obstacleControl(player1)
   
   if(keyState[37] && keyState[40]){
     player1.x-=2
@@ -54,6 +54,7 @@ let gameLoop=()=>{
   else if (keyState[40]){
        player1.y +=3;
       }
+
     checkBounds(player1)
     ctx.drawImage(player1.image,player1.x,player1.y)
     setTimeout(gameLoop,10)
@@ -74,10 +75,17 @@ const checkBounds=(player)=>{
   }
 }
 
-const obstacleControl=()=>{
+const obstacleControl=(player)=>{
   obstacles.forEach(obstacle=>{
+    if(player.x  > obstacle.x && player.x < obstacle.x + obstacle.width
+      || player.y  > obstacle.y && player.y < obstacle.y + obstacle.height){
+      console.log('hit!')
+    }
       ctx.fillRect(obstacle.x,obstacle.y,obstacle.width,obstacle.height)
       obstacle.x++;
       obstacle.y++;
+
   })
 }
+
+
