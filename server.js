@@ -9,6 +9,7 @@ mongoose.Promise = Promise
 const io = require('socket.io')(server)
 
 const PORT = process.env.PORT || 3000
+const MONGODB_URL = process.env.MONGODB_URL || 'mongodb://localhost:27017/dodger'
 
 app.set('view engine', 'pug')
 app.use(express.static('public'))
