@@ -6,7 +6,8 @@ const { Server }= require('http')
 const server = Server(app)
 const mongoose = require('mongoose')
 mongoose.Promise = Promise
-const io = require('socket.io')(server)
+const socketio = require('socket.io')
+const io = socketio(server)
 
 const PORT = process.env.PORT || 3000
 const MONGODB_URL = process.env.MONGODB_URL || 'mongodb://localhost:27017/dodger'
