@@ -18,9 +18,12 @@ window.onload = function() {
     	keyState[e.keyCode || e.which]=false;
     })
 
-  let gameLoop=()=>{
+gameLoop()
+};
 
-	ctx.clearRect(0,0,500,500)
+let gameLoop=()=>{
+
+  ctx.clearRect(0,0,500,500)
   if(keyState[37] && keyState[40]){
     player1.x-=2
     player1.y+=2
@@ -37,22 +40,18 @@ window.onload = function() {
     player1.x+=2
     player1.y-=2
   }
-	else if (keyState[37]){
-   		 player1.x -=2;
-    	}
+  else if (keyState[37]){
+       player1.x -=2;
+      }
   else if (keyState[39]){
-   		 player1.x +=2;
-    	}
+       player1.x +=2;
+      }
   else if (keyState[38]){
-   		 player1.y -=2;
-    	}
+       player1.y -=2;
+      }
   else if (keyState[40]){
-   		 player1.y +=2;
-    	}
+       player1.y +=2;
+      }
     ctx.drawImage(player1.image,player1.x,player1.y)
     setTimeout(gameLoop,10)
-	}
-
-gameLoop()
-};
-
+  }
