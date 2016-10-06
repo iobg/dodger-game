@@ -1,2 +1,10 @@
 doctype
-canvas(style='border:1px solid #000000;', width='200', height='100')
+html
+  head
+    title Dodger.io.ly
+    link(rel="stylesheet" href="main.css")
+  body
+    canvas(style='border:1px solid #000000;', width='200', height='100')
+
+script(src='/socket.io/socket.io.js')
+script(src='/main.js')
