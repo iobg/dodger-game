@@ -1,4 +1,7 @@
 'use strict'
+
+const socket = io()
+
 var c=document.getElementById("game");
 var ctx=c.getContext("2d");
 var status=document.querySelector('.status')
@@ -17,7 +20,7 @@ window.onload = function() {
 		player1.x=250;
 		player1.y=250;
     player1.keyState={}
-  
+
     window.addEventListener('keydown',e=>{
     	player1.keyState[e.keyCode || e.which]=true;
     })
@@ -25,10 +28,9 @@ window.onload = function() {
      window.addEventListener('keyup',e=>{
       player1.keyState[e.keyCode || e.which]=false;
     })
-
 gameLoop()
 };
-
+var score = 0
 const gameLoop=()=>{
   let loopTimer=setTimeout(gameLoop,10)
   clearScreen()
@@ -36,7 +38,9 @@ const gameLoop=()=>{
   checkBounds(player1)
   drawPlayer(player1)
   obstacleControl(player1,loopTimer)
-
+  ctx.font="30px Arial";
+  ctx.fillText(score, 10, 490)
+  score++
   }
 const clearScreen=()=>{
   ctx.clearRect(0,0,c.width,c.height)
@@ -71,7 +75,7 @@ const checkObstacleBounds=(obstacle)=>{
   }
 }
 
- 
+
 const obstacleControl=(player,loopTimer)=>{
   obstacles.forEach(obstacle=>{
     ctx.fillRect(obstacle.x,obstacle.y,obstacle.width,obstacle.height)
@@ -83,7 +87,7 @@ const obstacleControl=(player,loopTimer)=>{
       && player.y  < obstacle.y + obstacle.height && player.y + player.image.height >obstacle.y){
       clearTimeout(loopTimer)
     }
-      
+
   })
 }
 const drawPlayer=(player)=>{
@@ -121,4 +125,6 @@ const checkInput=(player)=>{
 
 }
 
-
+socket.on('connect', () => console.log(`Socket conected ${socket.id}`))
+socket.on('disconnect', () => console.log(`Socket disconnected ${socket.id}`))
+socket.on('error', console.error)
