@@ -41,16 +41,16 @@ let gameLoop=()=>{
     player1.y-=2
   }
   else if (keyState[37]){
-       player1.x -=2;
+       player1.x -=3;
       }
   else if (keyState[39]){
-       player1.x +=2;
+       player1.x +=3;
       }
   else if (keyState[38]){
-       player1.y -=2;
+       player1.y -=3;
       }
   else if (keyState[40]){
-       player1.y +=2;
+       player1.y +=3;
       }
     ctx.drawImage(player1.image,player1.x,player1.y)
     setTimeout(gameLoop,10)
