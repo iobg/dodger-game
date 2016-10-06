@@ -3,19 +3,15 @@
 var ctx=c.getContext("2d");
 let keyState={}
 let player1 ={}
+let obstacles=[{width:50,height:50,x:100,y:100}]
 window.onload = function() {
 		
 		player1.image=document.getElementById("player1");
 		player1.x=250;
 		player1.y=250;
-    ctx.drawImage(player1.image,player1.x,player1.y);
-
+  
     window.addEventListener('keydown',e=>{
     	keyState[e.keyCode || e.which]=true;
-      console.log(`X:${player1.x}`)
-      console.log(`Y:${player1.y}`)
-      console.log(player1.image.width)
-      console.log(player1.image.height)
     })
 
      window.addEventListener('keyup',e=>{
@@ -28,6 +24,8 @@ gameLoop()
 let gameLoop=()=>{
 
   ctx.clearRect(0,0,c.width,c.height)
+  obstacleControl()
+  
   if(keyState[37] && keyState[40]){
     player1.x-=2
     player1.y+=2
@@ -60,6 +58,7 @@ let gameLoop=()=>{
     ctx.drawImage(player1.image,player1.x,player1.y)
     setTimeout(gameLoop,10)
   }
+
 const checkBounds=(player)=>{
   if(player.x + player.image.width > c.width){
     player.x=c.width-player.image.width
@@ -73,4 +72,12 @@ const checkBounds=(player)=>{
   else if(player.y < 0){
     player.y=0
   }
+}
+
+const obstacleControl=()=>{
+  obstacles.forEach(obstacle=>{
+      ctx.fillRect(obstacle.x,obstacle.y,obstacle.width,obstacle.height)
+      obstacle.x++;
+      obstacle.y++;
+  })
 }
