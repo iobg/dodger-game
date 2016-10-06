@@ -3,14 +3,16 @@ var c=document.getElementById("game");
 var ctx=c.getContext("2d");
 var status=document.querySelector('.status')
 let player1 ={}
+//obstacles will be randomly generated
 let obstacles=[ {width:50,height:50,x:50,y:50, ySpd:1, xSpd:1},
                 {width:50,height:50,x:100,y:150, ySpd:-1, xSpd:2},
                 {width:50,height:50,x:100,y:200, ySpd:-1, xSpd:2},
                 {width:50,height:50,x:20,y:150, ySpd:-1, xSpd:2},
                 {width:50,height:50,x:17,y:19, ySpd:-1, xSpd:2},
                 {width:50,height:50,x:140,y:430, ySpd:-1, xSpd:2}]
+
 window.onload = function() {
-		
+
 		player1.image=document.getElementById("player1");
 		player1.x=250;
 		player1.y=250;
@@ -21,22 +23,24 @@ window.onload = function() {
     })
 
      window.addEventListener('keyup',e=>{
-    	player1.keyState[e.keyCode || e.which]=false;
+      player1.keyState[e.keyCode || e.which]=false;
     })
 
 gameLoop()
 };
 
-let gameLoop=()=>{
+const gameLoop=()=>{
   let loopTimer=setTimeout(gameLoop,10)
-  ctx.clearRect(0,0,c.width,c.height)
-  obstacleControl(player1,loopTimer)
+  clearScreen()
   checkInput(player1)
   checkBounds(player1)
-  ctx.drawImage(player1.image,player1.x,player1.y)
-    
-  }
+  drawPlayer(player1)
+  obstacleControl(player1,loopTimer)
 
+  }
+const clearScreen=()=>{
+  ctx.clearRect(0,0,c.width,c.height)
+}
 const checkBounds=(player)=>{
   if(player.x + player.image.width > c.width){
     player.x=c.width-player.image.width
@@ -82,7 +86,9 @@ const obstacleControl=(player,loopTimer)=>{
       
   })
 }
-
+const drawPlayer=(player)=>{
+  ctx.drawImage(player.image,player.x,player.y)
+}
 const checkInput=(player)=>{
   if(player.keyState[37] && player.keyState[40]){
     player.x-=2
