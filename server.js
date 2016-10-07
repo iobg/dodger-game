@@ -18,37 +18,27 @@ const MONGODB_URL = process.env.MONGODB_URL || 'mongodb://localhost:27017/dodger
 app.set('view engine', 'pug')
 //middleware
 app.use(express.static('public'))
-
-//routes
-app.get('/',(req,res)=>{
-	res.render('index')
-})
-app.get('/game',(req,res)=>{
-	res.render('index')
-})
-
-app.get('/game/create', (req, res) => {
-	gameModel.create({
-		//obstacles will be randomly generated later
-		obstacles:[ {width:50,height:50,x:50,y:50, ySpd:1, xSpd:1},
-	                {width:50,height:50,x:100,y:150, ySpd:-1, xSpd:2},
-	                {width:50,height:50,x:100,y:200, ySpd:-1, xSpd:2},
-	                {width:50,height:50,x:20,y:150, ySpd:-1, xSpd:2},
-	                {width:50,height:50,x:17,y:19, ySpd:-1, xSpd:2},
-	                {width:50,height:50,x:140,y:430, ySpd:-1, xSpd:2}],
-	  score:0,
-	  player1:{
-	  	x:250,
-	  	y:250,
-	  	name: "test",
-	  	keyState:{'38':false,
-								'39':false,
-								'40':false,
-							 	'37':false},
-	  	width:30,
-	  	height:30,
-	  },
-		player2:{
+const gameObj={
+    //obstacles will be randomly generated later
+    obstacles:[ {width:50,height:50,x:50,y:50, ySpd:1, xSpd:1},
+                  {width:50,height:50,x:100,y:150, ySpd:-1, xSpd:2},
+                  {width:50,height:50,x:100,y:200, ySpd:-1, xSpd:2},
+                  {width:50,height:50,x:20,y:150, ySpd:-1, xSpd:2},
+                  {width:50,height:50,x:17,y:19, ySpd:-1, xSpd:2},
+                  {width:50,height:50,x:140,y:430, ySpd:-1, xSpd:2}],
+    score:0,
+    player1:{
+      x:250,
+      y:250,
+      name: "test",
+      keyState:{'38':false,
+                '39':false,
+                '40':false,
+                '37':false},
+      width:30,
+      height:30,
+    },
+    player2:{
       x:300,
       y:300,
       name: "test",
@@ -59,7 +49,17 @@ app.get('/game/create', (req, res) => {
       width:30,
       height:30,
     }
-	})
+  }
+//routes
+app.get('/',(req,res)=>{
+	res.render('index')
+})
+app.get('/game',(req,res)=>{
+	res.render('index')
+})
+
+app.get('/game/create', (req, res) => {
+	gameModel.create(gameObj)
 	.then(game=>{
 		res.redirect(`/game/${game._id}`)
 		console.log(game._id)
@@ -88,38 +88,34 @@ io.on('connect',socket=>{
 	gameModel.findById(id)
 		.then(game =>{
       socket.join(game._id)
-      console.log(socket)
       socket.on('keyPress', key=>{
-       gameModel.findById(game._id).then(_game=>{
         if(socket.id===player1){
-          _game.player1.keyState[key]=true;
-          _game.save()
+          gameObj.player1.keyState[key]=true;
+          
         }
         else if(socket.id===player2){
-          _game.player2.keyState[key]=true;
-          _game.save()
+         gameObj.player2.keyState[key]=true;
+        
         }
-       }).catch(console.error)
+       })
 
       })
       socket.on('keyRelease', key=>{
-        gameModel.findById(game._id).then(_game=>{
           if(socket.id===player1){
-            _game.player1.keyState[key]=false;
-            _game.save()
+            gameObj.player1.keyState[key]=false;
+            
           }
           else if(socket.id===player2){
-            _game.player2.keyState[key]=false;
-            _game.save()
-          }
+            gameObj.player2.keyState[key]=false;
+             }
          
-       }).catch(console.error)
-      })
+       })
+      
         if(playersConnected<2){
-          gameLoop(game)
+          gameLoop(gameObj)
         } 
-		})
-  })
+        })
+	
 //runs all game logic 100x per second and emits game object to client
 const gameLoop=(game)=>{
 	checkInput(game.player1)
@@ -129,16 +125,12 @@ const gameLoop=(game)=>{
   checkBounds(game.player2)
   obstacleControl(game.obstacles,game.player2)
 	game.score++;
-	io.to(game._id).emit('update',game)
 	//listen for client keypresses
-	game.save()
-	gameModel.findById(game._id)
-	.then(gameUpdate=>{
-    setTimeout(()=>{
-      gameLoop(gameUpdate)},1)
-	})
-	.catch(console.error)
 
+    setTimeout(()=>{
+      gameLoop(game)},10)
+      io.emit('update',game)
+	
 	}
 //checks player input and increments its position accordingly
 const checkInput=(player)=>{
