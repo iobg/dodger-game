@@ -18,8 +18,10 @@ window.addEventListener('keyup',e=>{
 socket.on('update', game=>{
   console.log("loop")
   game.player1.image=document.querySelector('#player1')
+  game.player2.image=document.querySelector('#player2')
   clearScreen()
   drawPlayer(game.player1)
+  drawPlayer(game.player2)
   drawObstacles(game.obstacles)
   ctx.font="30px Arial";
   ctx.fillText(game.score, 10, 490)

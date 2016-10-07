@@ -48,7 +48,17 @@ app.get('/game/create', (req, res) => {
 	  	width:30,
 	  	height:30,
 	  },
-		player2:undefined
+		player2:{
+      x:300,
+      y:300,
+      name: "test",
+      keyState:{'38':false,
+                '39':false,
+                '40':false,
+                '37':false},
+      width:30,
+      height:30,
+    }
 	})
 	.then(game=>{
 		res.redirect(`/game/${game._id}`)
@@ -73,9 +83,6 @@ io.on('connect',socket=>{
     player2=socket.id
   }
   else{ player1=socket.id}
-    console.log('Player1',player1)
-    console.log('Player2',player2)
-
 	console.log(`Socket connected: ${socket.id}`)
 	const id = socket.handshake.headers.referer.split('/').slice(-1)[0]
 	gameModel.findById(id)
@@ -84,19 +91,29 @@ io.on('connect',socket=>{
       console.log(socket)
       socket.on('keyPress', key=>{
        gameModel.findById(game._id).then(_game=>{
-        console.log(socket.id,player1)
         
-         _game.player1.keyState[key]=true;
-         _game.save()
-        
-
+        if(socket.id===player1){
+          _game.player1.keyState[key]=true;
+          _game.save()
+        }
+        else if(socket.id===player2){
+          _game.player2.keyState[key]=true;
+          _game.save()
+        }
        }).catch(console.error)
 
       })
       socket.on('keyRelease', key=>{
         gameModel.findById(game._id).then(_game=>{
-         _game.player1.keyState[key]=false;
-         _game.save()
+          if(socket.id===player1){
+            _game.player1.keyState[key]=false;
+            _game.save()
+          }
+          else if(socket.id===player2){
+            _game.player2.keyState[key]=false;
+            _game.save()
+          }
+         
        }).catch(console.error)
 
 
@@ -104,17 +121,18 @@ io.on('connect',socket=>{
 
         if(playersConnected<2){
           gameLoop(game)
-        }
-        
-
+        } 
 		})
-
   })
 //runs all game logic 100x per second and emits game object to client
 const gameLoop=(game)=>{
 	checkInput(game.player1)
 	checkBounds(game.player1)
   obstacleControl(game.obstacles,game.player1)
+  checkInput(game.player2)
+  checkBounds(game.player2)
+  obstacleControl(game.obstacles,game.player2)
+
 	game.score++;
 	io.emit('update',game)
 	//listen for client keypresses
