@@ -63,13 +63,18 @@ app.get('/game/:id', (req, res) => {
 mongoose.connect(MONGODB_URL,()=>{
 	server.listen(PORT,()=> console.log('Server is listening on port', PORT))
 })
+let playersConnected=0
 //establishes connection with client and builds game object
 io.on('connect',socket=>{
+  playersConnected++
 	console.log(`Socket connected: ${socket.id}`)
 	const id = socket.handshake.headers.referer.split('/').slice(-1)[0]
 	gameModel.findById(id)
 		.then(game =>{
-			gameLoop(game)
+      socket.join(game._id)
+      if(playersConnected >=2){
+        gameLoop(game)
+      }
 			socket.on('keyPress', key=>{
 			 gameModel.findById(game._id).then(_game=>{
 				 _game.player1.keyState[key]=true;
@@ -100,7 +105,9 @@ const gameLoop=(game)=>{
 	game.save()
 	gameModel.findById(game._id)
 	.then(gameUpdate=>{
-	setTimeout(()=>{gameLoop(gameUpdate)},1)
+    setTimeout(()=>{
+      gameLoop(gameUpdate)
+    },1)
 	})
 	.catch(console.error)
 
