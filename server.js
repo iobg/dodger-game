@@ -48,7 +48,17 @@ app.get('/game/create', (req, res) => {
 	  	width:30,
 	  	height:30,
 	  },
-		player2:undefined
+		player2:{
+      x:250,
+      y:250,
+      name: "test",
+      keyState:{'38':false,
+                '39':false,
+                '40':false,
+                '37':false},
+      width:30,
+      height:30,
+    }
 	})
 	.then(game=>{
 		res.redirect(`/game/${game._id}`)
