@@ -16,6 +16,7 @@ window.addEventListener('keyup',e=>{
 })
 //is called 100x per second on server's emit
 socket.on('update', game=>{
+  console.log("loop")
   game.player1.image=document.querySelector('#player1')
   clearScreen()
   drawPlayer(game.player1)

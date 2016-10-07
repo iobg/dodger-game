@@ -5,8 +5,10 @@ const app = express()
 const { Server }= require('http')
 const server = Server(app)
 const mongoose = require('mongoose')
+const gameModel = require('./models/game')
 const socketio = require('socket.io')
 const io = socketio(server)
+mongoose.Promise = Promise
 //global variables
 const CANVAS_WIDTH=500
 const CANVAS_HEIGHT=500
@@ -22,6 +24,39 @@ app.get('/',(req,res)=>{
 	res.render('index')
 })
 app.get('/game',(req,res)=>{
+	res.render('index')
+})
+
+app.get('/game/create', (req, res) => {
+	gameModel.create({
+		//obstacles will be randomly generated later
+		obstacles:[ {width:50,height:50,x:50,y:50, ySpd:1, xSpd:1},
+	                {width:50,height:50,x:100,y:150, ySpd:-1, xSpd:2},
+	                {width:50,height:50,x:100,y:200, ySpd:-1, xSpd:2},
+	                {width:50,height:50,x:20,y:150, ySpd:-1, xSpd:2},
+	                {width:50,height:50,x:17,y:19, ySpd:-1, xSpd:2},
+	                {width:50,height:50,x:140,y:430, ySpd:-1, xSpd:2}],
+	  score:0,
+	  player1:{
+	  	x:250,
+	  	y:250,
+	  	name: "test",
+	  	keyState:{'38':false,
+								'39':false,
+								'40':false,
+							 	'37':false},
+	  	width:30,
+	  	height:30,
+	  },
+		player2:undefined
+	})
+	.then(game=>{
+		res.redirect(`/game/${game._id}`)
+		console.log(game._id)
+	})
+	.catch(console.error)
+})
+app.get('/game/:id', (req, res) => {
 	res.render('game')
 })
 //mongoose connection
@@ -31,45 +66,44 @@ mongoose.connect(MONGODB_URL,()=>{
 //establishes connection with client and builds game object
 io.on('connect',socket=>{
 	console.log(`Socket connected: ${socket.id}`)
-	const game = {}
-  //obstacles will be randomly generated later
-	game.obstacles=[ {width:50,height:50,x:50,y:50, ySpd:1, xSpd:1},
-                {width:50,height:50,x:100,y:150, ySpd:-1, xSpd:2},
-                {width:50,height:50,x:100,y:200, ySpd:-1, xSpd:2},
-                {width:50,height:50,x:20,y:150, ySpd:-1, xSpd:2},
-                {width:50,height:50,x:17,y:19, ySpd:-1, xSpd:2},
-                {width:50,height:50,x:140,y:430, ySpd:-1, xSpd:2}]
-  game.score=0;
-  game.player1={
-  	x:250,
-  	y:250,
-  	name: "test",
-  	keyState: {},
-  	width:30,
-  	height:30
-  }
-  game.player2=undefined
+	const id = socket.handshake.headers.referer.split('/').slice(-1)[0]
+	gameModel.findById(id)
+		.then(game =>{
+			gameLoop(game)
+			socket.on('keyPress', key=>{
+			 gameModel.findById(game._id).then(_game=>{
+				 _game.player1.keyState[key]=true;
+				 _game.save()
+				 console.log(_game.player1.keyState)
+			 }).catch(console.error)
 
-  //begin gameloop
-  gameLoop(game)
-  //listen for client keypresses
-  socket.on('keyPress', key=>{
-   game.player1.keyState[key]=true;
-  })
+			})
+			socket.on('keyRelease', key=>{
+				game.player1.keyState[key]=false;
+				game.save()
+			})
 
-  socket.on('keyRelease', key=>{
-  	game.player1.keyState[key]=false;
-  })
+
+		})
+
+
 
   })
 //runs all game logic 100x per second and emits game object to client
 const gameLoop=(game)=>{
-	let loopTimer=setTimeout(()=>{gameLoop(game)},10)
 	checkInput(game.player1)
 	checkBounds(game.player1)
-	obstacleControl(game.obstacles,game.player1,loopTimer)
 	game.score++;
 	io.emit('update',game)
+	//listen for client keypresses
+	game.save()
+	gameModel.findById(game._id)
+	.then(gameUpdate=>{
+		let loopTimer=setTimeout(()=>{gameLoop(gameUpdate)},10)
+		obstacleControl(game.obstacles,gameUpdate.player1,loopTimer)
+	})
+	.catch(console.error)
+
 	}
 //checks player input and increments its position accordingly
 const checkInput=(player)=>{
@@ -145,7 +179,3 @@ const obstacleControl=(obstacles,player,loopTimer)=>{
     }
   })
 }
-
-
-
-
