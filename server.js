@@ -8,6 +8,8 @@ const mongoose = require('mongoose')
 mongoose.Promise = Promise
 const socketio = require('socket.io')
 const io = socketio(server)
+const CANVAS_WIDTH=500
+const CANVAS_HEIGHT=500
 
 const PORT = process.env.PORT || 3000
 const MONGODB_URL = process.env.MONGODB_URL || 'mongodb://localhost:27017/dodger'
@@ -41,9 +43,12 @@ io.on('connect',socket=>{
   	x:250,
   	y:250,
   	name: "test",
-  	keyState: {}
+  	keyState: {},
+  	width:30,
+  	height:30
   }
   game.player2=undefined
+
   socket.emit('game start', game)
   gameLoop(game)
 socket.on('keyPress', key=>{
@@ -58,6 +63,7 @@ socket.on('keyRelease', key=>{
 const gameLoop=(game)=>{
 	let loopTimer=setTimeout(()=>{gameLoop(game)},10)
 	checkInput(game.player1)
+	checkBounds(game.player1)
 	io.emit('update',game)
 	}
 
@@ -91,6 +97,21 @@ const checkInput=(player)=>{
        player.y +=3;
       }
 
+}
+
+const checkBounds=(player)=>{
+  if(player.x + player.width > CANVAS_WIDTH){
+    player.x=CANVAS_WIDTH-player.width
+  }
+  else if(player.x < 0){
+    player.x=0
+  }
+  else if(player.y + player.height > CANVAS_HEIGHT){
+    player.y=CANVAS_HEIGHT-player.height
+  }
+  else if(player.y < 0){
+    player.y=0
+  }
 }
 
 

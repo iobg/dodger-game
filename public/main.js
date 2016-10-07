@@ -22,7 +22,6 @@ socket.on('update', game=>{
   game.player1.image=document.querySelector('#player1')
   let loopTimer =undefined;
   clearScreen()
-  checkBounds(game.player1)
   drawPlayer(game.player1)
   obstacleControl(game.obstacles,game.player1,loopTimer)
   ctx.font="30px Arial";
@@ -32,20 +31,7 @@ socket.on('update', game=>{
 const clearScreen=()=>{
   ctx.clearRect(0,0,c.width,c.height)
 }
-const checkBounds=(player)=>{
-  if(player.x + player.image.width > c.width){
-    player.x=c.width-player.image.width
-  }
-  else if(player.x < 0){
-    player.x=0
-  }
-  else if(player.y + player.image.height > c.height){
-    player.y=c.height-player.image.height
-  }
-  else if(player.y < 0){
-    player.y=0
-  }
-}
+
 
 const checkObstacleBounds=(obstacle)=>{
   if(obstacle.x + obstacle.width >= c.width){
