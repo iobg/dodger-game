@@ -17,8 +17,6 @@ window.addEventListener('keyup',e=>{
 })
 
 socket.on('update', game=>{
-
-
   game.player1.image=document.querySelector('#player1')
   clearScreen()
   drawPlayer(game.player1)
@@ -34,9 +32,7 @@ const drawObstacles=(obstacles)=>{
   obstacles.forEach(obstacle=>{
     ctx.fillRect(obstacle.x,obstacle.y,obstacle.width,obstacle.height)
   })
-  
 }
-
 const drawPlayer=(player)=>{
   ctx.drawImage(player.image,player.x,player.y)
 }

@@ -116,7 +116,6 @@ const checkBounds=(player)=>{
   }
 }
 
-
 const checkObstacleBounds=(obstacle)=>{
   if(obstacle.x + obstacle.width >= CANVAS_WIDTH){
     obstacle.xSpd= -Math.random()*2-1
@@ -131,7 +130,6 @@ const checkObstacleBounds=(obstacle)=>{
     obstacle.ySpd= Math.random()*2+1
   }
 }
-
 
 const obstacleControl=(obstacles,player,loopTimer)=>{
   obstacles.forEach(obstacle=>{
