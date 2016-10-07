@@ -41,9 +41,9 @@ app.get('/game/create', (req, res) => {
 	  	x:250,
 	  	y:250,
 	  	name: "test",
-	  	keyState: {},
+	  	keyState: {keys:null},
 	  	width:30,
-	  	height:30
+	  	height:30,
 	  },
 		player2:undefined
 	})
@@ -66,33 +66,42 @@ io.on('connect',socket=>{
 	const id = socket.handshake.headers.referer.split('/').slice(-1)[0]
 	gameModel.findById(id)
 		.then(game =>{
-			//listen for client keypresses
-		  socket.on('keyPress', key=>{
-		   game.player1.keyState[key]=true;
-		  })
+			gameLoop(game)
+			socket.on('keyPress', key=>{
+			 game.player1.keyState[key]=true;
+			 game.save();
+			})
+			socket.on('keyRelease', key=>{
+				game.player1.keyState[key]=false;
+				game.save()
+			})
 
-		  socket.on('keyRelease', key=>{
-		  	game.player1.keyState[key]=false;
-		  })
-			gameloop(game)
 
 		})
-
 
 
 
   })
 //runs all game logic 100x per second and emits game object to client
 const gameLoop=(game)=>{
-	let loopTimer=setTimeout(()=>{gameLoop(game)},10)
+	let currentGameState=game
 	checkInput(game.player1)
 	checkBounds(game.player1)
-	obstacleControl(game.obstacles,game.player1,loopTimer)
 	game.score++;
 	io.emit('update',game)
+	//listen for client keypresses
+	game.save()
+	gameModel.findById(game._id)
+	.then(gameUpdate=>{
+		let loopTimer=setTimeout(()=>{gameLoop(gameUpdate)},10)
+		obstacleControl(currentGameState.obstacles,gameUpdate.player1,loopTimer)
+	})
+	.catch(console.error)
+
 	}
 //checks player input and increments its position accordingly
 const checkInput=(player)=>{
+	console.log(player.keyState)
   if(player.keyState[37] && player.keyState[40]){
     player.x-=2
     player.y+=2
