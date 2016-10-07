@@ -3,7 +3,7 @@
 const mongoose = require('mongoose')
 
 module.exports = mongoose.model('Game', {
-  obstacles: [Object],
+  obstacles: Array,
   score: Number,
   player1: {
     x: Number,
