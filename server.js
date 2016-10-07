@@ -73,9 +73,6 @@ io.on('connect',socket=>{
     player2=socket.id
   }
   else{ player1=socket.id}
-    console.log('Player1',player1)
-    console.log('Player2',player2)
-
 	console.log(`Socket connected: ${socket.id}`)
 	const id = socket.handshake.headers.referer.split('/').slice(-1)[0]
 	gameModel.findById(id)
@@ -84,10 +81,12 @@ io.on('connect',socket=>{
       console.log(socket)
       socket.on('keyPress', key=>{
        gameModel.findById(game._id).then(_game=>{
-        console.log(socket.id,player1)
         
-         _game.player1.keyState[key]=true;
+        if(socket.id===player1){
+          _game.player1.keyState[key]=true;
          _game.save()
+        }
+         
         
 
        }).catch(console.error)
@@ -95,8 +94,11 @@ io.on('connect',socket=>{
       })
       socket.on('keyRelease', key=>{
         gameModel.findById(game._id).then(_game=>{
-         _game.player1.keyState[key]=false;
-         _game.save()
+          if(socket.id===player1){
+            _game.player1.keyState[key]=false;
+            _game.save()
+          }
+         
        }).catch(console.error)
 
 
