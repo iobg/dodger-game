@@ -74,33 +74,33 @@ io.on('connect',socket=>{
 			 gameModel.findById(game._id).then(_game=>{
 				 _game.player1.keyState[key]=true;
 				 _game.save()
-				 console.log(_game.player1.keyState)
 			 }).catch(console.error)
 
 			})
 			socket.on('keyRelease', key=>{
-				game.player1.keyState[key]=false;
-				game.save()
+        gameModel.findById(game._id).then(_game=>{
+         _game.player1.keyState[key]=false;
+         _game.save()
+       }).catch(console.error)
+
+
 			})
 
-
 		})
-
-
 
   })
 //runs all game logic 100x per second and emits game object to client
 const gameLoop=(game)=>{
 	checkInput(game.player1)
 	checkBounds(game.player1)
+  obstacleControl(game.obstacles,game.player1)
 	game.score++;
 	io.emit('update',game)
 	//listen for client keypresses
 	game.save()
 	gameModel.findById(game._id)
 	.then(gameUpdate=>{
-		let loopTimer=setTimeout(()=>{gameLoop(gameUpdate)},10)
-		obstacleControl(game.obstacles,gameUpdate.player1,loopTimer)
+	setTimeout(()=>{gameLoop(gameUpdate)},1)
 	})
 	.catch(console.error)
 
@@ -168,14 +168,14 @@ const checkObstacleBounds=(obstacle)=>{
   }
 }
 //checks if a player intersects an obstacle, and ends the game it does
-const obstacleControl=(obstacles,player,loopTimer)=>{
+const obstacleControl=(obstacles,player)=>{
   obstacles.forEach(obstacle=>{
     checkObstacleBounds(obstacle)
     obstacle.x += obstacle.xSpd;
     obstacle.y += obstacle.ySpd;
     if(player.x  < obstacle.x + obstacle.width && player.x + player.width > obstacle.x
       && player.y  < obstacle.y + obstacle.height && player.y + player.height >obstacle.y){
-      clearTimeout(loopTimer)
+      console.log('collide')
     }
   })
 }
