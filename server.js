@@ -61,9 +61,7 @@ app.get('/game',(req,res)=>{
 app.get('/game/create', (req, res) => {
 	gameModel.create(gameObj)
 	.then(game=>{
-		res.redirect(`/game/${game._id}`)
-		console.log(game._id)
-	})
+		res.redirect(`/game/${game._id}`)	})
 	.catch(console.error)
 })
 app.get('/game/:id', (req, res) => {
@@ -90,31 +88,35 @@ io.on('connect',socket=>{
       socket.join(game._id)
       socket.on('keyPress', key=>{
         if(socket.id===player1){
-          gameObj.player1.keyState[key]=true;
+          game.player1.keyState[key]=true;
           
         }
         else if(socket.id===player2){
-         gameObj.player2.keyState[key]=true;
+         game.player2.keyState[key]=true;
         
         }
        })
-
-      })
-      socket.on('keyRelease', key=>{
+          socket.on('keyRelease', key=>{
           if(socket.id===player1){
-            gameObj.player1.keyState[key]=false;
+            game.player1.keyState[key]=false;
             
           }
           else if(socket.id===player2){
-            gameObj.player2.keyState[key]=false;
-             }
+          game.player2.keyState[key]=false;
+          }
          
        })
-      
-        if(playersConnected<2){
-          gameLoop(gameObj)
+          if(playersConnected===2){
+          gameLoop(game)
+          playersConnected=0
+          player1=undefined
+          player2=undefined
         } 
         })
+      })
+      
+      
+        
 	
 //runs all game logic 100x per second and emits game object to client
 const gameLoop=(game)=>{
@@ -129,7 +131,7 @@ const gameLoop=(game)=>{
 
     setTimeout(()=>{
       gameLoop(game)},10)
-      io.emit('update',game)
+      io.to(game.id).emit('update',game)
 	
 	}
 //checks player input and increments its position accordingly
