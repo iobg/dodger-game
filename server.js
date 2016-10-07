@@ -49,8 +49,8 @@ app.get('/game/create', (req, res) => {
 	  	height:30,
 	  },
 		player2:{
-      x:250,
-      y:250,
+      x:300,
+      y:300,
       name: "test",
       keyState:{'38':false,
                 '39':false,
@@ -94,11 +94,12 @@ io.on('connect',socket=>{
         
         if(socket.id===player1){
           _game.player1.keyState[key]=true;
-         _game.save()
+          _game.save()
         }
-         
-        
-
+        else if(socket.id===player2){
+          _game.player2.keyState[key]=true;
+          _game.save()
+        }
        }).catch(console.error)
 
       })
@@ -106,6 +107,10 @@ io.on('connect',socket=>{
         gameModel.findById(game._id).then(_game=>{
           if(socket.id===player1){
             _game.player1.keyState[key]=false;
+            _game.save()
+          }
+          else if(socket.id===player2){
+            _game.player2.keyState[key]=false;
             _game.save()
           }
          
@@ -116,17 +121,18 @@ io.on('connect',socket=>{
 
         if(playersConnected<2){
           gameLoop(game)
-        }
-        
-
+        } 
 		})
-
   })
 //runs all game logic 100x per second and emits game object to client
 const gameLoop=(game)=>{
 	checkInput(game.player1)
 	checkBounds(game.player1)
   obstacleControl(game.obstacles,game.player1)
+  checkInput(game.player2)
+  checkBounds(game.player2)
+  obstacleControl(game.obstacles,game.player2)
+
 	game.score++;
 	io.emit('update',game)
 	//listen for client keypresses
