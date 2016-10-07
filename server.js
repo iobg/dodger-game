@@ -91,7 +91,6 @@ io.on('connect',socket=>{
       console.log(socket)
       socket.on('keyPress', key=>{
        gameModel.findById(game._id).then(_game=>{
-        
         if(socket.id===player1){
           _game.player1.keyState[key]=true;
           _game.save()
@@ -115,10 +114,7 @@ io.on('connect',socket=>{
           }
          
        }).catch(console.error)
-
-
       })
-
         if(playersConnected<2){
           gameLoop(game)
         } 
@@ -132,16 +128,14 @@ const gameLoop=(game)=>{
   checkInput(game.player2)
   checkBounds(game.player2)
   obstacleControl(game.obstacles,game.player2)
-
 	game.score++;
-	io.emit('update',game)
+	io.to(game._id).emit('update',game)
 	//listen for client keypresses
 	game.save()
 	gameModel.findById(game._id)
 	.then(gameUpdate=>{
     setTimeout(()=>{
-      gameLoop(gameUpdate)
-    },1)
+      gameLoop(gameUpdate)},1)
 	})
 	.catch(console.error)
 
