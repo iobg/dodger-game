@@ -9,12 +9,16 @@ module.exports = mongoose.model('Game', {
     x: Number,
     y: Number,
     name: String,
-    image: String
+    width: Number,
+    height: Number,
+    keyState: Object
   },
   player2: {
     x: Number,
     y: Number,
     name: String,
-    image: String
+    width: Number,
+    height: Number,
+    keyState: Object
   }
 })
