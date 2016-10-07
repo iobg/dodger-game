@@ -64,32 +64,48 @@ mongoose.connect(MONGODB_URL,()=>{
 	server.listen(PORT,()=> console.log('Server is listening on port', PORT))
 })
 let playersConnected=0
+let player1=undefined;
+let player2=undefined;
 //establishes connection with client and builds game object
 io.on('connect',socket=>{
   playersConnected++
+  if(player1){
+    player2=socket.id
+  }
+  else{ player1=socket.id}
+    console.log('Player1',player1)
+    console.log('Player2',player2)
+
 	console.log(`Socket connected: ${socket.id}`)
 	const id = socket.handshake.headers.referer.split('/').slice(-1)[0]
 	gameModel.findById(id)
 		.then(game =>{
       socket.join(game._id)
-      if(playersConnected >=2){
-        gameLoop(game)
-      }
-			socket.on('keyPress', key=>{
-			 gameModel.findById(game._id).then(_game=>{
-				 _game.player1.keyState[key]=true;
-				 _game.save()
-			 }).catch(console.error)
+      console.log(socket)
+      socket.on('keyPress', key=>{
+       gameModel.findById(game._id).then(_game=>{
+        console.log(socket.id,player1)
+        
+         _game.player1.keyState[key]=true;
+         _game.save()
+        
 
-			})
-			socket.on('keyRelease', key=>{
+       }).catch(console.error)
+
+      })
+      socket.on('keyRelease', key=>{
         gameModel.findById(game._id).then(_game=>{
          _game.player1.keyState[key]=false;
          _game.save()
        }).catch(console.error)
 
 
-			})
+      })
+
+        if(playersConnected<2){
+          gameLoop(game)
+        }
+        
 
 		})
 
@@ -182,7 +198,6 @@ const obstacleControl=(obstacles,player)=>{
     obstacle.y += obstacle.ySpd;
     if(player.x  < obstacle.x + obstacle.width && player.x + player.width > obstacle.x
       && player.y  < obstacle.y + obstacle.height && player.y + player.height >obstacle.y){
-      console.log('collide')
     }
   })
 }
