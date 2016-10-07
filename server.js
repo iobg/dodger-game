@@ -64,6 +64,8 @@ const gameLoop=(game)=>{
 	let loopTimer=setTimeout(()=>{gameLoop(game)},10)
 	checkInput(game.player1)
 	checkBounds(game.player1)
+	obstacleControl(game.obstacles,game.player1,loopTimer)
+	game.score++;
 	io.emit('update',game)
 	}
 
@@ -112,6 +114,37 @@ const checkBounds=(player)=>{
   else if(player.y < 0){
     player.y=0
   }
+}
+
+
+const checkObstacleBounds=(obstacle)=>{
+  if(obstacle.x + obstacle.width >= CANVAS_WIDTH){
+    obstacle.xSpd= -Math.random()*2-1
+  }
+  else if(obstacle.x <= 0){
+    obstacle.xSpd= Math.random()*2+1
+  }
+  else if(obstacle.y + obstacle.height >= CANVAS_HEIGHT){
+    obstacle.ySpd= -Math.random()*2-1
+  }
+  else if(obstacle.y <= 0){
+    obstacle.ySpd= Math.random()*2+1
+  }
+}
+
+
+const obstacleControl=(obstacles,player,loopTimer)=>{
+  obstacles.forEach(obstacle=>{
+    checkObstacleBounds(obstacle)
+      obstacle.x += obstacle.xSpd;
+      obstacle.y += obstacle.ySpd;
+
+    if(player.x  < obstacle.x + obstacle.width && player.x + player.width > obstacle.x
+      && player.y  < obstacle.y + obstacle.height && player.y + player.height >obstacle.y){
+      clearTimeout(loopTimer)
+    }
+
+  })
 }
 
 

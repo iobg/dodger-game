@@ -20,49 +20,23 @@ socket.on('update', game=>{
 
 
   game.player1.image=document.querySelector('#player1')
-  let loopTimer =undefined;
   clearScreen()
   drawPlayer(game.player1)
-  obstacleControl(game.obstacles,game.player1,loopTimer)
+  drawObstacles(game.obstacles)
   ctx.font="30px Arial";
-  ctx.fillText(score, 10, 490)
-  score++
+  ctx.fillText(game.score, 10, 490)
   })
+
 const clearScreen=()=>{
   ctx.clearRect(0,0,c.width,c.height)
 }
-
-
-const checkObstacleBounds=(obstacle)=>{
-  if(obstacle.x + obstacle.width >= c.width){
-    obstacle.xSpd= -Math.random()*2-1
-  }
-  else if(obstacle.x <= 0){
-    obstacle.xSpd= Math.random()*2+1
-  }
-  else if(obstacle.y + obstacle.height >= c.height){
-    obstacle.ySpd= -Math.random()*2-1
-  }
-  else if(obstacle.y <= 0){
-    obstacle.ySpd= Math.random()*2+1
-  }
-}
-
-
-const obstacleControl=(obstacles,player,loopTimer)=>{
+const drawObstacles=(obstacles)=>{
   obstacles.forEach(obstacle=>{
     ctx.fillRect(obstacle.x,obstacle.y,obstacle.width,obstacle.height)
-    checkObstacleBounds(obstacle)
-      obstacle.x += obstacle.xSpd;
-      obstacle.y += obstacle.ySpd;
-
-    if(player.x  < obstacle.x + obstacle.width && player.x + player.image.width > obstacle.x
-      && player.y  < obstacle.y + obstacle.height && player.y + player.image.height >obstacle.y){
-      clearTimeout(loopTimer)
-    }
-
   })
+  
 }
+
 const drawPlayer=(player)=>{
   ctx.drawImage(player.image,player.x,player.y)
 }
