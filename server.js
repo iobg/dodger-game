@@ -63,44 +63,67 @@ app.get('/game/:id', (req, res) => {
 mongoose.connect(MONGODB_URL,()=>{
 	server.listen(PORT,()=> console.log('Server is listening on port', PORT))
 })
+let playersConnected=0
+let player1=undefined;
+let player2=undefined;
 //establishes connection with client and builds game object
 io.on('connect',socket=>{
+  playersConnected++
+  if(player1){
+    player2=socket.id
+  }
+  else{ player1=socket.id}
+    console.log('Player1',player1)
+    console.log('Player2',player2)
+
 	console.log(`Socket connected: ${socket.id}`)
 	const id = socket.handshake.headers.referer.split('/').slice(-1)[0]
 	gameModel.findById(id)
 		.then(game =>{
-			gameLoop(game)
-			socket.on('keyPress', key=>{
-			 gameModel.findById(game._id).then(_game=>{
-				 _game.player1.keyState[key]=true;
-				 _game.save()
-				 console.log(_game.player1.keyState)
-			 }).catch(console.error)
+      socket.join(game._id)
+      console.log(socket)
+      socket.on('keyPress', key=>{
+       gameModel.findById(game._id).then(_game=>{
+        console.log(socket.id,player1)
+        
+         _game.player1.keyState[key]=true;
+         _game.save()
+        
 
-			})
-			socket.on('keyRelease', key=>{
-				game.player1.keyState[key]=false;
-				game.save()
-			})
+       }).catch(console.error)
 
+      })
+      socket.on('keyRelease', key=>{
+        gameModel.findById(game._id).then(_game=>{
+         _game.player1.keyState[key]=false;
+         _game.save()
+       }).catch(console.error)
+
+
+      })
+
+        if(playersConnected<2){
+          gameLoop(game)
+        }
+        
 
 		})
-
-
 
   })
 //runs all game logic 100x per second and emits game object to client
 const gameLoop=(game)=>{
 	checkInput(game.player1)
 	checkBounds(game.player1)
+  obstacleControl(game.obstacles,game.player1)
 	game.score++;
 	io.emit('update',game)
 	//listen for client keypresses
 	game.save()
 	gameModel.findById(game._id)
 	.then(gameUpdate=>{
-		let loopTimer=setTimeout(()=>{gameLoop(gameUpdate)},10)
-		obstacleControl(game.obstacles,gameUpdate.player1,loopTimer)
+    setTimeout(()=>{
+      gameLoop(gameUpdate)
+    },1)
 	})
 	.catch(console.error)
 
@@ -168,14 +191,13 @@ const checkObstacleBounds=(obstacle)=>{
   }
 }
 //checks if a player intersects an obstacle, and ends the game it does
-const obstacleControl=(obstacles,player,loopTimer)=>{
+const obstacleControl=(obstacles,player)=>{
   obstacles.forEach(obstacle=>{
     checkObstacleBounds(obstacle)
     obstacle.x += obstacle.xSpd;
     obstacle.y += obstacle.ySpd;
     if(player.x  < obstacle.x + obstacle.width && player.x + player.width > obstacle.x
       && player.y  < obstacle.y + obstacle.height && player.y + player.height >obstacle.y){
-      clearTimeout(loopTimer)
     }
   })
 }
