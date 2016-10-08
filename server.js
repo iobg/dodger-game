@@ -77,7 +77,8 @@ let player2=undefined;
 //establishes connection with client and builds game object
 
 //how to store game without using a global variable?
-let _game={}
+let _game=[{}]
+let currentGame=0
 io.on('connect',socket=>{
   playersConnected++
   if(player1){
@@ -91,34 +92,37 @@ io.on('connect',socket=>{
 	gameModel.findById(id)
 		.then(game =>{
       socket.join(game._id)
-      _game = game
-      _game.player1id=player1
-      _game.player2id=player2
+      socket.currentGame=currentGame
+      _game[socket.currentGame] = game
+      _game[socket.currentGame].player1id=player1
+      _game[socket.currentGame].player2id=player2
    
       socket.on('keyPress', key=>{
-        if(socket.id===_game.player1id){
-        _game.player1.keyState[key]=true; 
+        if(socket.id===_game[socket.currentGame].player1id){
+        _game[socket.currentGame].player1.keyState[key]=true; 
              
         }
-        else if(socket.id===_game.player2id){
-         _game.player2.keyState[key]=true;
+        else if(socket.id===_game[socket.currentGame].player2id){
+         _game[socket.currentGame].player2.keyState[key]=true;
         
         }
        })
         socket.on('keyRelease', key=>{
-          if(socket.id===_game.player1id){
-            _game.player1.keyState[key]=false;            
+          if(socket.id===_game[socket.currentGame].player1id){
+            _game[socket.currentGame].player1.keyState[key]=false;            
           }
-          else if(socket.id===_game.player2id){
-          _game.player2.keyState[key]=false;
+          else if(socket.id===_game[socket.currentGame].player2id){
+          _game[socket.currentGame].player2.keyState[key]=false;
           }
          
        })
         if(playersConnected===2){
-          gameLoop(_game)
+          gameLoop(_game[socket.currentGame])
           playersConnected=0
           player1=undefined
           player2=undefined
+          currentGame++
+          _game.push({})
           }
         })
       })
