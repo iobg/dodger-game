@@ -77,7 +77,6 @@ let player2=undefined;
 //establishes connection with client and builds game object
 let _game={}
 io.on('connect',socket=>{
-
   playersConnected++
   if(player1){
     player2=socket.id
