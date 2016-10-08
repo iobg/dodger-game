@@ -77,7 +77,7 @@ let player2=undefined;
 //establishes connection with client and builds game object
 
 //how to store game without using a global variable?
-let _game=[{}]
+let allGames=[{}]
 let currentGame=0
 io.on('connect',socket=>{
   playersConnected++
@@ -93,43 +93,40 @@ io.on('connect',socket=>{
 		.then(game =>{
       socket.join(game._id)
       socket.currentGame=currentGame
-      _game[socket.currentGame] = game
-      _game[socket.currentGame].player1id=player1
-      _game[socket.currentGame].player2id=player2
+      allGames[socket.currentGame] = game
+      allGames[socket.currentGame].player1id=player1
+      allGames[socket.currentGame].player2id=player2
    
       socket.on('keyPress', key=>{
-        if(socket.id===_game[socket.currentGame].player1id){
-        _game[socket.currentGame].player1.keyState[key]=true; 
+        if(socket.id===allGames[socket.currentGame].player1id){
+        allGames[socket.currentGame].player1.keyState[key]=true; 
              
         }
-        else if(socket.id===_game[socket.currentGame].player2id){
-         _game[socket.currentGame].player2.keyState[key]=true;
+        else if(socket.id===allGames[socket.currentGame].player2id){
+         allGames[socket.currentGame].player2.keyState[key]=true;
         
         }
        })
         socket.on('keyRelease', key=>{
-          if(socket.id===_game[socket.currentGame].player1id){
-            _game[socket.currentGame].player1.keyState[key]=false;            
+          if(socket.id===allGames[socket.currentGame].player1id){
+            allGames[socket.currentGame].player1.keyState[key]=false;            
           }
-          else if(socket.id===_game[socket.currentGame].player2id){
-          _game[socket.currentGame].player2.keyState[key]=false;
+          else if(socket.id===allGames[socket.currentGame].player2id){
+          allGames[socket.currentGame].player2.keyState[key]=false;
           }
          
        })
         if(playersConnected===2){
-          gameLoop(_game[socket.currentGame])
+          gameLoop(allGames[socket.currentGame])
           playersConnected=0
           player1=undefined
           player2=undefined
           currentGame++
-          _game.push({})
+          allGames.push({})
           }
         })
       })
       
-      
-        
-	
 //runs all game logic 100x per second and emits game object to client
 const gameLoop=(game)=>{
 	checkInput(game.player1)
