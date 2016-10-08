@@ -78,6 +78,7 @@ let player2=undefined;
 
 //how to store game without using a global variable?
 let allGames=[{}]
+app.locals.games=allGames
 let currentGame=0
 io.on('connect',socket=>{
   playersConnected++
@@ -123,6 +124,8 @@ io.on('connect',socket=>{
           player2=undefined
           currentGame++
           allGames.push({})
+          app.locals.games=allGames
+
           }
         })
       })
