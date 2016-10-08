@@ -75,6 +75,8 @@ let playersConnected=0
 let player1=undefined;
 let player2=undefined;
 //establishes connection with client and builds game object
+
+//how to store game without using a global variable?
 let _game={}
 io.on('connect',socket=>{
   playersConnected++
