@@ -75,7 +75,9 @@ let playersConnected=0
 let player1=undefined;
 let player2=undefined;
 //establishes connection with client and builds game object
+let _game={}
 io.on('connect',socket=>{
+
   playersConnected++
   if(player1){
     player2=socket.id
@@ -84,37 +86,39 @@ io.on('connect',socket=>{
 
 	console.log(`Socket connected: ${socket.id}`)
 	const id = socket.handshake.headers.referer.split('/').slice(-1)[0]
+  
 	gameModel.findById(id)
 		.then(game =>{
       socket.join(game._id)
-
-      game.player1id=player1
-      game.player2id=player2
-
+      _game = game
+      _game.player1id=player1
+      _game.player2id=player2
+   
       socket.on('keyPress', key=>{
-        if(socket.id===game.player1id){
-          game.player1.keyState[key]=true;        
+        if(socket.id===_game.player1id){
+        _game.player1.keyState[key]=true; 
+             
         }
-        else if(socket.id===game.player2id){
-         game.player2.keyState[key]=true;
+        else if(socket.id===_game.player2id){
+         _game.player2.keyState[key]=true;
         
         }
        })
-          socket.on('keyRelease', key=>{
-          if(socket.id===game.player1id){
-            game.player1.keyState[key]=false;            
+        socket.on('keyRelease', key=>{
+          if(socket.id===_game.player1id){
+            _game.player1.keyState[key]=false;            
           }
-          else if(socket.id===game.player2id){
-          game.player2.keyState[key]=false;
+          else if(socket.id===_game.player2id){
+          _game.player2.keyState[key]=false;
           }
          
        })
-          if(playersConnected===2){
-          gameLoop(game)
+        if(playersConnected===2){
+          gameLoop(_game)
           playersConnected=0
           player1=undefined
           player2=undefined
-        } 
+          }
         })
       })
       
@@ -123,7 +127,6 @@ io.on('connect',socket=>{
 	
 //runs all game logic 100x per second and emits game object to client
 const gameLoop=(game)=>{
-  console.log(game.player1)
 	checkInput(game.player1)
 	checkBounds(game.player1)
   obstacleControl(game.obstacles,game.player1)
