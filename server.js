@@ -81,27 +81,30 @@ io.on('connect',socket=>{
     player2=socket.id
   }
   else{ player1=socket.id}
+
 	console.log(`Socket connected: ${socket.id}`)
 	const id = socket.handshake.headers.referer.split('/').slice(-1)[0]
 	gameModel.findById(id)
 		.then(game =>{
       socket.join(game._id)
+
+      game.player1id=player1
+      game.player2id=player2
+
       socket.on('keyPress', key=>{
-        if(socket.id===player1){
-          game.player1.keyState[key]=true;
-          
+        if(socket.id===game.player1id){
+          game.player1.keyState[key]=true;        
         }
-        else if(socket.id===player2){
+        else if(socket.id===game.player2id){
          game.player2.keyState[key]=true;
         
         }
        })
           socket.on('keyRelease', key=>{
-          if(socket.id===player1){
-            game.player1.keyState[key]=false;
-            
+          if(socket.id===game.player1id){
+            game.player1.keyState[key]=false;            
           }
-          else if(socket.id===player2){
+          else if(socket.id===game.player2id){
           game.player2.keyState[key]=false;
           }
          
@@ -120,6 +123,7 @@ io.on('connect',socket=>{
 	
 //runs all game logic 100x per second and emits game object to client
 const gameLoop=(game)=>{
+  console.log(game.player1)
 	checkInput(game.player1)
 	checkBounds(game.player1)
   obstacleControl(game.obstacles,game.player1)
