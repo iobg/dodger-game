@@ -83,7 +83,6 @@ let allGames=[{}]
 app.locals.games=allGames
 let currentGame=0
 io.on('connect',socket=>{
-
   playersConnected++
   if(player1){
     player2=socket.id

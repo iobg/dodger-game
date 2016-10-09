@@ -6,6 +6,7 @@ html
     h1 Dodger
     a(href='/game/create') Create game
   ul
-    for game in games
+    each game, i in games
       li 
+        if games[i].id != games[i].id
         a(href=`/game/${game.id}`) #{game.id}
