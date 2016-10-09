@@ -21,22 +21,23 @@ app.use(express.static('public'))
 //game objects
 function getRandomObstacle(){
   const maxSize = 80
-  const maxSpeed = 4
+  const maxSpeed = 2
   const posOrNeg= Math.random()*2 - 1
-  this.width= Math.random() * maxSize + 10
-  this.height= Math.random() *maxSize + 10
-  this.x= Math.random()*CANVAS_WIDTH
-  this.y= Math.random()*CANVAS_HEIGHT
+  let obstacle={}
+  obstacle.width= Math.random() * maxSize + 20
+  obstacle.height= Math.random() * maxSize + 20
+  obstacle.x= Math.random()*CANVAS_WIDTH
+  obstacle.y= Math.random()*CANVAS_HEIGHT
   //allows objects to have different speeds and trajectories
-  this.xSpd= Math.random()*maxSpeed +(1 * posOrNeg)
-  this.xSpd= Math.random()*maxSpeed +(1 * posOrNeg)
-  return this
+  obstacle.xSpd= Math.random()*maxSpeed +(1 * posOrNeg)
+  obstacle.ySpd= Math.random()*maxSpeed +(1 * posOrNeg)
+  return obstacle
 }
 
 
 const gameObj={
     //obstacles will be randomly generated later
-    obstacles:[new getRandomObstacle()],
+    obstacles:[],
     score:0,
     player1:{
       x:250,
@@ -135,6 +136,8 @@ io.on('connect',socket=>{
        })
         if(playersConnected%2===0){
           console.log("game start")
+          allGames[socket.currentGame].totalTime=0
+          allGames[socket.currentGame].obstacles.push(getRandomObstacle())
           gameLoop(allGames[socket.currentGame])
           player1=undefined
           player2=undefined
@@ -147,6 +150,8 @@ io.on('connect',socket=>{
       
 //runs all game logic 100x per second and emits game object to client
 const gameLoop=(game)=>{
+  game.totalTime++
+  addNewObstacle(game.totalTime,game.obstacles)
   checkGameActive(game)
 	checkInput(game.player1)
 	checkBounds(game.player1)
@@ -157,6 +162,11 @@ const gameLoop=(game)=>{
 	game.score++;
 	//listen for client keypresses
 	}
+const addNewObstacle=(time,obstacles)=>{
+  if(time % 500 === 0){
+    obstacles.push(getRandomObstacle())
+  }
+}
 const checkGameActive=(game)=>{
   if(!game.player1.alive && !game.player2.alive){
     game.active=false
