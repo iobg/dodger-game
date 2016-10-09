@@ -50,7 +50,8 @@ const gameObj={
                 '37':false},
       width:30,
       height:30,
-    }
+    },
+    active:true
   }
 //routes
 app.get('/',(req,res)=>{
@@ -135,6 +136,7 @@ io.on('connect',socket=>{
       
 //runs all game logic 100x per second and emits game object to client
 const gameLoop=(game)=>{
+  checkGameActive(game)
 	checkInput(game.player1)
 	checkBounds(game.player1)
   obstacleControl(game.obstacles,game.player1)
@@ -143,13 +145,18 @@ const gameLoop=(game)=>{
   obstacleControl(game.obstacles,game.player2)
 	game.score++;
 	//listen for client keypresses
-
+	}
+const checkGameActive=(game)=>{
+  if(!game.player1.alive && !game.player2.alive){
+    game.active=false
+    io.to(game.id).emit('end') 
+  }
+  else{
     setTimeout(()=>{
       gameLoop(game)},10)
-      io.to(game.id).emit('update',game)
-	
-	}
-
+      io.to(game.id).emit('update',game) 
+    }
+}
 //checks player input and increments its position accordingly
 const checkInput=(player)=>{
   if(player.keyState[37] && player.keyState[40]){

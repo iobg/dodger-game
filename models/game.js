@@ -39,5 +39,6 @@ module.exports = mongoose.model('Game', {
       39: Boolean,
       40: Boolean
     }
-  }
+  },
+  active:Boolean
 })

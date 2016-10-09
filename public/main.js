@@ -14,7 +14,7 @@ window.addEventListener('keydown',e=>{
 window.addEventListener('keyup',e=>{
   socket.emit('keyRelease',e.keyCode)
 })
-ctx.fillText("Waiting for another player to join", c.height/2 - 100 , c.width/2)
+ctx.fillText("Waiting for another player to join", c.width/2 - 100 , c.height/2)
 //is called 100x per second on server's emit
 socket.on('update', game=>{
   console.log("loop")
@@ -27,6 +27,10 @@ socket.on('update', game=>{
   ctx.font="30px Arial";
   ctx.fillText(game.score, 10, 490)
   })
+socket.on('end',()=>{
+  clearScreen()
+  ctx.fillText("Game Over", c.width/2-100, c.height/2)
+})
 //wipes the screen to prevent duplicate objects
 const clearScreen=()=>{
   ctx.clearRect(0,0,c.width,c.height)
