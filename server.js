@@ -19,10 +19,11 @@ app.set('view engine', 'pug')
 //middleware
 app.use(express.static('public'))
 //game objects
+
 function getRandomObstacle(){
   const maxSize = 80
   const maxSpeed = 2
-  const posOrNeg= Math.random()*2 - 1
+  var posOrNeg = Math.random() < 0.5 ? -1 : 1
   let obstacle={}
   obstacle.width= Math.random() * maxSize + 20
   obstacle.height= Math.random() * maxSize + 20
@@ -228,16 +229,16 @@ const checkBounds=(player)=>{
 //prevents obstacles from going outside of canvas and sets random speed/direction
 const checkObstacleBounds=(obstacle)=>{
   if(obstacle.x + obstacle.width >= CANVAS_WIDTH){
-    obstacle.xSpd= -Math.random()*2-1
+    obstacle.xSpd= -Math.random()
   }
   else if(obstacle.x <= 0){
-    obstacle.xSpd= Math.random()*2+1
+    obstacle.xSpd= Math.random()
   }
   else if(obstacle.y + obstacle.height >= CANVAS_HEIGHT){
-    obstacle.ySpd= -Math.random()*2-1
+    obstacle.ySpd= -Math.random()
   }
   else if(obstacle.y <= 0){
-    obstacle.ySpd= Math.random()*2+1
+    obstacle.ySpd= Math.random()
   }
 }
 //checks if a player intersects an obstacle, and ends the game it does
