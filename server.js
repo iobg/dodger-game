@@ -31,6 +31,7 @@ const gameObj={
       x:250,
       y:250,
       name: "test",
+      alive:true,
       keyState:{'38':false,
                 '39':false,
                 '40':false,
@@ -42,6 +43,7 @@ const gameObj={
       x:300,
       y:300,
       name: "test",
+      alive:true,
       keyState:{'38':false,
                 '39':false,
                 '40':false,
@@ -217,6 +219,7 @@ const obstacleControl=(obstacles,player)=>{
     obstacle.y += obstacle.ySpd;
     if(player.x  < obstacle.x + obstacle.width && player.x + player.width > obstacle.x
       && player.y  < obstacle.y + obstacle.height && player.y + player.height >obstacle.y){
+      player.alive=false
     }
   })
 }
