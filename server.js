@@ -94,9 +94,12 @@ io.on('connect',socket=>{
 		.then(game =>{
       socket.join(game._id)
       socket.currentGame=currentGame
-      allGames[socket.currentGame] = game
-      allGames[socket.currentGame].player1id=player1
-      allGames[socket.currentGame].player2id=player2
+      
+        allGames[socket.currentGame] = game
+        allGames[socket.currentGame].player1id=player1
+        allGames[socket.currentGame].player2id=player2
+      
+      
    
       socket.on('keyPress', key=>{
         if(socket.id===allGames[socket.currentGame].player1id){
@@ -117,13 +120,12 @@ io.on('connect',socket=>{
           }
          
        })
-        if(playersConnected===2){
+        if(playersConnected%2===0){
+          console.log("game start")
           gameLoop(allGames[socket.currentGame])
-          playersConnected=0
           player1=undefined
           player2=undefined
           currentGame++
-          allGames.push({})
           app.locals.games=allGames
 
           }
