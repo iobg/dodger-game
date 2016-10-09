@@ -18,9 +18,25 @@ const MONGODB_URL = process.env.MONGODB_URL || 'mongodb://localhost:27017/dodger
 app.set('view engine', 'pug')
 //middleware
 app.use(express.static('public'))
+//game objects
+function getRandomObstacle(){
+  const maxSize = 80
+  const maxSpeed = 4
+  const posOrNeg= Math.random()*2 - 1
+  this.width= Math.random() * maxSize + 10
+  this.height= Math.random() *maxSize + 10
+  this.x= Math.random()*CANVAS_WIDTH
+  this.y= Math.random()*CANVAS_HEIGHT
+  //allows objects to have different speeds and trajectories
+  this.xSpd= Math.random()*maxSpeed +(1 * posOrNeg)
+  this.xSpd= Math.random()*maxSpeed +(1 * posOrNeg)
+  return this
+}
+
+
 const gameObj={
     //obstacles will be randomly generated later
-    obstacles:[new getRandomObstacle],
+    obstacles:[new getRandomObstacle()],
     score:0,
     player1:{
       x:250,
@@ -130,19 +146,6 @@ io.on('connect',socket=>{
       })
       
 //runs all game logic 100x per second and emits game object to client
-const getRandomObstacle=()=>{
-  const maxSize = 80
-  const maxSpeed = 4
-  const posOrNeg= Math.random()*2 - 1
-  this.width= Math.random() * maxSize + 10
-  this.height= Math.random() *maxSize + 10
-  this.x= Math.random()*CANVAS_WIDTH
-  this.y= Math.random()*CANVAS_HEIGHT
-  //allows objects to have different speeds and trajectories
-  this.xSpd= Math.random()*maxSpeed +(1 * posOrNeg)
-  this.xSpd= Math.random()*maxSpeed +(1 * posOrNeg)
-  return this
-}
 const gameLoop=(game)=>{
   checkGameActive(game)
 	checkInput(game.player1)
