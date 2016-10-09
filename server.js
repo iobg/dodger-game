@@ -149,6 +149,7 @@ const gameLoop=(game)=>{
       io.to(game.id).emit('update',game)
 	
 	}
+
 //checks player input and increments its position accordingly
 const checkInput=(player)=>{
   if(player.keyState[37] && player.keyState[40]){

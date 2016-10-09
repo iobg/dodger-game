@@ -32,7 +32,7 @@ module.exports = mongoose.model('Game', {
     name: String,
     width: Number,
     height: Number,
-    alive: Boolean
+    alive: Boolean,
     keyState: {
       37: Boolean,
       38: Boolean,

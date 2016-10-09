@@ -39,7 +39,9 @@ const drawObstacles=(obstacles)=>{
 }
 //player drawn
 const drawPlayer=(player)=>{
-  ctx.drawImage(player.image,player.x,player.y)
+  if(player.alive){
+     ctx.drawImage(player.image,player.x,player.y)
+  }
 }
 
 //sockets
