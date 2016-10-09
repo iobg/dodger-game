@@ -20,12 +20,7 @@ app.set('view engine', 'pug')
 app.use(express.static('public'))
 const gameObj={
     //obstacles will be randomly generated later
-    obstacles:[ {width:50,height:50,x:50,y:50, ySpd:1, xSpd:1},
-                  {width:50,height:50,x:100,y:150, ySpd:-1, xSpd:2},
-                  {width:50,height:50,x:100,y:200, ySpd:-1, xSpd:2},
-                  {width:50,height:50,x:20,y:150, ySpd:-1, xSpd:2},
-                  {width:50,height:50,x:17,y:19, ySpd:-1, xSpd:2},
-                  {width:50,height:50,x:140,y:430, ySpd:-1, xSpd:2}],
+    obstacles:[new getRandomObstacle],
     score:0,
     player1:{
       x:250,
@@ -135,6 +130,19 @@ io.on('connect',socket=>{
       })
       
 //runs all game logic 100x per second and emits game object to client
+const getRandomObstacle=()=>{
+  const maxSize = 80
+  const maxSpeed = 4
+  const posOrNeg= Math.random()*2 - 1
+  this.width= Math.random() * maxSize + 10
+  this.height= Math.random() *maxSize + 10
+  this.x= Math.random()*CANVAS_WIDTH
+  this.y= Math.random()*CANVAS_HEIGHT
+  //allows objects to have different speeds and trajectories
+  this.xSpd= Math.random()*maxSpeed +(1 * posOrNeg)
+  this.xSpd= Math.random()*maxSpeed +(1 * posOrNeg)
+  return this
+}
 const gameLoop=(game)=>{
   checkGameActive(game)
 	checkInput(game.player1)
