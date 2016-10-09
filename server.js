@@ -30,8 +30,8 @@ function getRandomObstacle(){
   obstacle.x= Math.random()*CANVAS_WIDTH
   obstacle.y= Math.random()*CANVAS_HEIGHT
   //allows objects to have different speeds and trajectories
-  obstacle.xSpd= Math.random()*maxSpeed +(1 * posOrNeg)
-  obstacle.ySpd= Math.random()*maxSpeed +(1 * posOrNeg)
+  obstacle.xSpd= Math.random()*(1 * posOrNeg)
+  obstacle.ySpd= Math.random()*(1 * posOrNeg)
   return obstacle
 }
 
