@@ -182,32 +182,32 @@ const checkGameActive=(game)=>{
 //checks player input and increments its position accordingly
 const checkInput=(player)=>{
   if(player.keyState[37] && player.keyState[40]){
-    player.x-=2
-    player.y+=2
+    player.x-=3
+    player.y+=3
   }
   else if(player.keyState[39] && player.keyState[40]){
-    player.x+=2
-    player.y+=2
+    player.x+=3
+    player.y+=3
   }
   else if(player.keyState[37] && player.keyState[38]){
-    player.x-=2
-    player.y-=2
+    player.x-=3
+    player.y-=3
   }
   else if(player.keyState[39] && player.keyState[38]){
-    player.x+=2
-    player.y-=2
+    player.x+=3
+    player.y-=3
   }
   else if (player.keyState[37]){
-       player.x -=3;
+       player.x -=4;
       }
   else if (player.keyState[39]){
-       player.x +=3;
+       player.x +=4;
       }
   else if (player.keyState[38]){
-       player.y -=3;
+       player.y -=4;
       }
   else if (player.keyState[40]){
-       player.y +=3;
+       player.y +=4;
       }
 
 }
