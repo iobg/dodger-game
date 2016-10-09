@@ -14,6 +14,7 @@ window.addEventListener('keydown',e=>{
 window.addEventListener('keyup',e=>{
   socket.emit('keyRelease',e.keyCode)
 })
+ctx.fillText("Waiting for another player to join", c.height/2 - 100 , c.width/2)
 //is called 100x per second on server's emit
 socket.on('update', game=>{
   console.log("loop")

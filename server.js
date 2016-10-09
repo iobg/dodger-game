@@ -81,6 +81,7 @@ let allGames=[{}]
 app.locals.games=allGames
 let currentGame=0
 io.on('connect',socket=>{
+
   playersConnected++
   if(player1){
     player2=socket.id
@@ -99,8 +100,6 @@ io.on('connect',socket=>{
         allGames[socket.currentGame].player1id=player1
         allGames[socket.currentGame].player2id=player2
       
-      
-   
       socket.on('keyPress', key=>{
         if(socket.id===allGames[socket.currentGame].player1id){
         allGames[socket.currentGame].player1.keyState[key]=true; 
