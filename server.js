@@ -20,20 +20,6 @@ app.set('view engine', 'pug')
 app.use(express.static('public'))
 //game objects
 
-function getRandomObstacle(){
-  const maxSize = 80
-  const maxSpeed = 2
-  var posOrNeg = Math.random() < 0.5 ? -1 : 1
-  let obstacle={}
-  obstacle.width= Math.random() * maxSize + 20
-  obstacle.height= Math.random() * maxSize + 20
-  obstacle.x= Math.random()*CANVAS_WIDTH
-  obstacle.y= Math.random()*CANVAS_HEIGHT
-  //allows objects to have different speeds and trajectories
-  obstacle.xSpd= Math.random()*(1 * posOrNeg)
-  obstacle.ySpd= Math.random()*(1 * posOrNeg)
-  return obstacle
-}
 
 
 const gameObj={
@@ -163,6 +149,21 @@ const gameLoop=(game)=>{
 	game.score++;
 	//listen for client keypresses
 	}
+function getRandomObstacle(){
+  const maxSize = 80
+  const maxSpeed = 2
+  var posOrNeg = Math.random() < 0.5 ? -1 : 1
+  let obstacle={}
+  obstacle.width= Math.random() * maxSize + 20
+  obstacle.height= Math.random() * maxSize + 20
+  obstacle.x= Math.random()*CANVAS_WIDTH
+  obstacle.y= Math.random()*CANVAS_HEIGHT
+  //allows objects to have different speeds and trajectories
+  obstacle.xSpd= Math.random()*(1 * posOrNeg)
+  obstacle.ySpd= Math.random()*(1 * posOrNeg)
+  return obstacle
+}
+
 const addNewObstacle=(time,obstacles)=>{
   if(time % 500 === 0){
     obstacles.push(getRandomObstacle())
