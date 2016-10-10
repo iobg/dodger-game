@@ -11,6 +11,7 @@ module.exports = mongoose.model('Game', {
     xSpd:Number,
     ySpd:Number
   }],
+  coin: Object,
   score: Number,
   player1: {
     x: Number,
@@ -18,12 +19,14 @@ module.exports = mongoose.model('Game', {
     name: String,
     width: Number,
     height: Number,
+    alive: Boolean,
     keyState: {
       37: Boolean,
       38: Boolean,
       39: Boolean,
       40: Boolean
-    }
+    },
+    score:Number
   },
   player2: {
     x: Number,
@@ -31,11 +34,14 @@ module.exports = mongoose.model('Game', {
     name: String,
     width: Number,
     height: Number,
+    alive: Boolean,
     keyState: {
       37: Boolean,
       38: Boolean,
       39: Boolean,
       40: Boolean
-    }
-  }
+    },
+    score:Number
+  },
+  active:Boolean
 })
