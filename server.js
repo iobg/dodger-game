@@ -92,11 +92,12 @@ io.on('connect',socket=>{
           }
          
        })
-        if(playersConnected%2===0 && !gamesInSession.includes(game._id)){
+        if(!gamesInSession.includes(id) && playersConnected%2===0){
           console.log("game start")
           allGames[socket.currentGame].totalTime=0
           allGames[socket.currentGame].obstacles.push(getRandomObstacle())
-          gamesInSession.push(game._id)
+          gamesInSession.push(id)
+          
           gameLoop(allGames[socket.currentGame])
           player1=undefined
           player2=undefined
