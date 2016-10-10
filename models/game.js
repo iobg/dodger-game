@@ -24,7 +24,8 @@ module.exports = mongoose.model('Game', {
       38: Boolean,
       39: Boolean,
       40: Boolean
-    }
+    },
+    score:Number
   },
   player2: {
     x: Number,
@@ -38,7 +39,8 @@ module.exports = mongoose.model('Game', {
       38: Boolean,
       39: Boolean,
       40: Boolean
-    }
+    },
+    score:Number
   },
   active:Boolean
 })

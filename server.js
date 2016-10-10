@@ -37,6 +37,7 @@ const gameObj={
                 '37':false},
       width:30,
       height:30,
+      score:0
     },
     player2:{
       x:300,
@@ -49,6 +50,7 @@ const gameObj={
                 '37':false},
       width:30,
       height:30,
+      score:0
     },
     active:true
   }
@@ -145,7 +147,8 @@ const gameLoop=(game)=>{
   checkInput(game.player2)
   checkBounds(game.player2)
   obstacleControl(game.obstacles,game.player2)
-	game.score++;
+	game.player1.score++
+	game.player2.score++
 	//listen for client keypresses
 	}
 function getRandomObstacle(){

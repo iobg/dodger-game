@@ -26,7 +26,8 @@ socket.on('update', game=>{
   drawPlayer(game.player2)
   drawObstacles(game.obstacles)
   ctx.font="30px Arial";
-  ctx.fillText(game.score, 10, 490)
+  ctx.fillText(game.player1.score, 10, 490)
+  ctx.fillText(game.player2.score, 420, 490)
   })
 socket.on('end',()=>{
   clearScreen()
