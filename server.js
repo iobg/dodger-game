@@ -92,7 +92,7 @@ io.on('connect',socket=>{
           }
          
        })
-        if(playersConnected===2 && !gamesInSession.includes(game._id)){
+        if(playersConnected%2===0 && !gamesInSession.includes(game._id)){
           console.log("game start")
           allGames[socket.currentGame].totalTime=0
           allGames[socket.currentGame].obstacles.push(getRandomObstacle())
