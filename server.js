@@ -20,41 +20,8 @@ app.set('view engine', 'pug')
 app.use(express.static('public'))
 //game objects
 
-
-
-const gameObj={
-    //obstacles will be randomly generated later
-    obstacles:[],
-    score:0,
-    coin: getScoreCoin(),
-    player1:{
-      x:250,
-      y:250,
-      name: "test",
-      alive:true,
-      keyState:{'38':false,
-                '39':false,
-                '40':false,
-                '37':false},
-      width:30,
-      height:30,
-      score:0
-    },
-    player2:{
-      x:300,
-      y:300,
-      name: "test",
-      alive:true,
-      keyState:{'38':false,
-                '39':false,
-                '40':false,
-                '37':false},
-      width:30,
-      height:30,
-      score:0
-    },
-    active:true
-  }
+const gameObj= require('./modules/gameObj.js')
+const {checkCoin,getScoreCoin,scoreControl} = require('./modules/scoreCalculations.js')
 //routes
 app.get('/',(req,res)=>{
 	res.render('index')
@@ -154,27 +121,7 @@ const gameLoop=(game)=>{
 	checkCoin(game,game.player2,game.coin)
 	//listen for client keypresses
 	}
-const checkCoin=(game,player,coin)=>{
-	if(player.x  < coin.x + coin.width && player.x + player.width > coin.x
-      && player.y  < coin.y + coin.height && player.y + player.height >coin.y){
-		player.score +=500
-		game.coin=getScoreCoin()
-	}
-}
-function getScoreCoin(){
-	let coin = {}
-	coin.height=15
-	coin.width=15
-	coin.x= Math.random()*CANVAS_WIDTH
-  coin.y= Math.random()*CANVAS_HEIGHT
-  return coin;
 
-}
-const scoreControl=(player)=>{
-	if(player.alive){
-		player.score++
-	}
-}
 function getRandomObstacle(){
   const maxSize = 50
   const maxSpeed = 2
