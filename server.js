@@ -147,12 +147,17 @@ const gameLoop=(game)=>{
   checkInput(game.player2)
   checkBounds(game.player2)
   obstacleControl(game.obstacles,game.player2)
-	game.player1.score++
-	game.player2.score++
+	scoreControl(game.player1)
+	scoreControl(game.player2)
 	//listen for client keypresses
 	}
+const scoreControl=(player)=>{
+	if(player.alive){
+		player.score++
+	}
+}
 function getRandomObstacle(){
-  const maxSize = 80
+  const maxSize = 50
   const maxSpeed = 2
   var posOrNeg = Math.random() < 0.5 ? -1 : 1
   let obstacle={}
