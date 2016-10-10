@@ -19,10 +19,10 @@ app.set('view engine', 'pug')
 //middleware
 app.use(express.static('public'))
 //game objects
-
 const gameObj= require('./modules/gameObj.js')
 const {checkCoin,getScoreCoin,scoreControl} = require('./modules/scoreCalculations.js')
 const {getRandomObstacle,addNewObstacle,checkObstacleBounds,obstacleControl} = require('./modules/obstacleHandler.js')
+const {checkInput,checkBounds} =  require('./modules/playerHandler.js')
 //routes
 app.get('/',(req,res)=>{
 	res.render('index')
@@ -133,52 +133,5 @@ const checkGameActive=(game)=>{
       gameLoop(game)},10)
       io.to(game.id).emit('update',game) 
     }
-}
-//checks player input and increments its position accordingly
-const checkInput=(player)=>{
-  if(player.keyState[37] && player.keyState[40]){
-    player.x-=3
-    player.y+=3
-  }
-  else if(player.keyState[39] && player.keyState[40]){
-    player.x+=3
-    player.y+=3
-  }
-  else if(player.keyState[37] && player.keyState[38]){
-    player.x-=3
-    player.y-=3
-  }
-  else if(player.keyState[39] && player.keyState[38]){
-    player.x+=3
-    player.y-=3
-  }
-  else if (player.keyState[37]){
-       player.x -=4;
-      }
-  else if (player.keyState[39]){
-       player.x +=4;
-      }
-  else if (player.keyState[38]){
-       player.y -=4;
-      }
-  else if (player.keyState[40]){
-       player.y +=4;
-      }
-
-}
-//prevents player from going outside of the canvas
-const checkBounds=(player)=>{
-  if(player.x + player.width > CANVAS_WIDTH){
-    player.x=CANVAS_WIDTH-player.width
-  }
-  else if(player.x < 0){
-    player.x=0
-  }
-  else if(player.y + player.height > CANVAS_HEIGHT){
-    player.y=CANVAS_HEIGHT-player.height
-  }
-  else if(player.y < 0){
-    player.y=0
-  }
 }
 

@@ -17,7 +17,6 @@ function getRandomObstacle(){
   return obstacle
 }
 
-
 const addNewObstacle=(time,obstacles)=>{
   if(time % 500 === 0){
     obstacles.push(getRandomObstacle())
