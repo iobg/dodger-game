@@ -122,7 +122,7 @@ const gameLoop=(game)=>{
 	scoreControl(game.player2)
 	checkCoin(game,game.player1,game.coin)
 	checkCoin(game,game.player2,game.coin)
-	//listen for client keypresses
+
 	}
 
 const checkGameActive=(game)=>{
