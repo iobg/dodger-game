@@ -26,6 +26,7 @@ const gameObj={
     //obstacles will be randomly generated later
     obstacles:[],
     score:0,
+    coin: getScoreCoin(),
     player1:{
       x:250,
       y:250,
@@ -169,6 +170,15 @@ function getRandomObstacle(){
   obstacle.xSpd= Math.random()*(1 * posOrNeg)
   obstacle.ySpd= Math.random()*(1 * posOrNeg)
   return obstacle
+}
+function getScoreCoin(){
+	let coin = {}
+	coin.height=10
+	coin.width=10
+	coin.x= Math.random()*CANVAS_WIDTH
+  coin.y= Math.random()*CANVAS_HEIGHT
+  return coin;
+
 }
 
 const addNewObstacle=(time,obstacles)=>{

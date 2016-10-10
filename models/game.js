@@ -11,6 +11,7 @@ module.exports = mongoose.model('Game', {
     xSpd:Number,
     ySpd:Number
   }],
+  coin: Object,
   score: Number,
   player1: {
     x: Number,

@@ -24,11 +24,13 @@ socket.on('update', game=>{
   clearScreen()
   drawPlayer(game.player1)
   drawPlayer(game.player2)
+  drawCoin(game.coin)
   drawObstacles(game.obstacles)
   ctx.font="30px Arial";
   ctx.fillText(game.player1.score, 10, 490)
   ctx.fillText(game.player2.score, 420, 490)
   })
+
 socket.on('end',()=>{
   clearScreen()
   ctx.font="50px Arial";
@@ -40,9 +42,14 @@ const clearScreen=()=>{
 }
 //all 'enemy' objects drawn
 const drawObstacles=(obstacles)=>{
+  ctx.fillStyle="#000000"
   obstacles.forEach(obstacle=>{
     ctx.fillRect(obstacle.x,obstacle.y,obstacle.width,obstacle.height)
   })
+}
+const drawCoin=(coin)=>{
+  ctx.fillStyle="#FFFF00"
+  ctx.fillRect(coin.x,coin.y,coin.width,coin.height)
 }
 //player drawn
 const drawPlayer=(player)=>{
