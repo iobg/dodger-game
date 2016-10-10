@@ -199,7 +199,7 @@ const addNewObstacle=(time,obstacles)=>{
 const checkGameActive=(game)=>{
   if(!game.player1.alive && !game.player2.alive){
     game.active=false
-    io.to(game.id).emit('end') 
+    io.to(game.id).emit('end',game) 
   }
   else{
     setTimeout(()=>{

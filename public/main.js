@@ -31,10 +31,16 @@ socket.on('update', game=>{
   ctx.fillText(game.player2.score, 420, 490)
   })
 
-socket.on('end',()=>{
+socket.on('end',game=>{
+  let winner = game.player1.score > game.player2.score ? "Player 1" : "Player 2"
+  console.log(winner)
   clearScreen()
   ctx.font="50px Arial";
-  ctx.fillText("Game Over", c.width/2-100, c.height/2)
+  ctx.fillText("Game Over", c.width/2-110, c.height/2)
+  ctx.font="30px Arial";
+  ctx.fillText(`${winner} Wins!`, c.width/2-90, c.height/2+30)
+
+
 })
 //wipes the screen to prevent duplicate objects
 const clearScreen=()=>{
