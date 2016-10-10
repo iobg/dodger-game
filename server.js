@@ -51,6 +51,7 @@ let player2=undefined;
 
 //how to store game without using a global variable?
 let allGames=[{}]
+let gamesInSession=[]
 app.locals.games=allGames
 let currentGame=0
 io.on('connect',socket=>{
@@ -91,10 +92,11 @@ io.on('connect',socket=>{
           }
          
        })
-        if(playersConnected%2===0){
+        if(playersConnected===2 && !gamesInSession.includes(game._id)){
           console.log("game start")
           allGames[socket.currentGame].totalTime=0
           allGames[socket.currentGame].obstacles.push(getRandomObstacle())
+          gamesInSession.push(game._id)
           gameLoop(allGames[socket.currentGame])
           player1=undefined
           player2=undefined
@@ -103,8 +105,7 @@ io.on('connect',socket=>{
 
           }
         })
-      })
-      
+      }) 
 //runs all game logic 100x per second and emits game object to client
 const gameLoop=(game)=>{
   game.totalTime++
